@@ -15,6 +15,7 @@ instance/
 .thevibehosting*
 .acl-repair/
 .screenshot-profile/
+.preview-*/
 .tools/
 wheels/
 *.tar.gz

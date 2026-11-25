@@ -31,7 +31,7 @@ Get-ChildItem -LiteralPath $screens -Filter "*.html" | ForEach-Object {
 }
 
 if ($PublicUrl) {
-    $target = Join-Path $png "线上-首页.png"
+    $target = Join-Path $png "public-home.png"
     if (Test-Path $target) { Remove-Item -LiteralPath $target -Force }
     & $edge --headless=new --disable-gpu --hide-scrollbars --no-first-run `
         --user-data-dir=$profile --window-size=1280,900 --virtual-time-budget=4000 `
