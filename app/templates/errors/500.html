@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}500 · CampusEvent{% endblock %}
+{% block content %}
+<div class="error-page">
+  <div class="error-code">500</div>
+  <h1>服务器暂时无法处理</h1>
+  <p class="muted">请稍后重试。如果问题持续，请查看服务端日志。</p>
+  <a class="btn btn-primary" href="{{ url_for('auth.index') }}">返回首页</a>
+</div>
+{% endblock %}

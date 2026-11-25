@@ -1,0 +1,116 @@
+{
+  "run_at": "2026-11-25T17:52:38+08:00",
+  "base_url": "http://127.0.0.1:5000",
+  "total": 10,
+  "passed": 10,
+  "records": [
+    {
+      "id": "C1",
+      "action": "管理员创建直接报名活动，容量 2",
+      "expected": "创建成功，可供学生报名",
+      "actual": "活动 ID=1，管理页可见",
+      "passed": true,
+      "evidence": [
+        "docs/evidence/html/C1-创建活动.html"
+      ]
+    },
+    {
+      "id": "C2",
+      "action": "学生 A 报名直接报名活动",
+      "expected": "变为已通过并产生站内通知",
+      "actual": "详情显示已通过，消息含报名成功",
+      "passed": true,
+      "evidence": [
+        "docs/evidence/html/C2-报名后详情.html",
+        "docs/evidence/html/C2-报名成功消息.html"
+      ]
+    },
+    {
+      "id": "C3",
+      "action": "学生 A 再次提交相同活动报名",
+      "expected": "拒绝重复有效报名",
+      "actual": "页面提示请勿重复提交",
+      "passed": true,
+      "evidence": [
+        "docs/evidence/html/C3-重复报名提示.html"
+      ]
+    },
+    {
+      "id": "C4",
+      "action": "学生 B 填满名额后学生 C 再报名",
+      "expected": "B 通过，C 因名额不足失败",
+      "actual": "B 详情显示已通过，C 页面提示名额已满",
+      "passed": true,
+      "evidence": [
+        "docs/evidence/html/C4-B已通过.html",
+        "docs/evidence/html/C4-C名额已满.html"
+      ]
+    },
+    {
+      "id": "C5",
+      "action": "学生 A 申请审核型活动",
+      "expected": "状态为待审核",
+      "actual": "详情显示待审核",
+      "passed": true,
+      "evidence": [
+        "docs/evidence/html/C5-待审核详情.html"
+      ]
+    },
+    {
+      "id": "C6",
+      "action": "管理员批准 A 的待审核报名",
+      "expected": "变为已通过且生成通知",
+      "actual": "审批页显示批准成功，学生消息含审核通过",
+      "passed": true,
+      "evidence": [
+        "docs/evidence/html/C6-审批后页面.html",
+        "docs/evidence/html/C6-审核通过消息.html"
+      ]
+    },
+    {
+      "id": "C7",
+      "action": "管理员拒绝另一待审核报名",
+      "expected": "变为已拒绝且生成通知",
+      "actual": "学生消息含审核未通过",
+      "passed": true,
+      "evidence": [
+        "docs/evidence/html/C7-拒绝后页面.html",
+        "docs/evidence/html/C7-拒绝消息.html"
+      ]
+    },
+    {
+      "id": "C8",
+      "action": "名额已满时批准 B 的报名",
+      "expected": "批准失败，不超出人数上限",
+      "actual": "审批页提示名额已满，B 仍为待审核",
+      "passed": true,
+      "evidence": [
+        "docs/evidence/html/C8-批准失败提示.html",
+        "docs/evidence/html/C8-B仍待审核.html"
+      ]
+    },
+    {
+      "id": "C9",
+      "action": "学生取消已通过报名",
+      "expected": "状态变为已取消，统计同步变化",
+      "actual": "取消前剩余 1，取消后剩余 2，我的报名显示已取消",
+      "passed": true,
+      "evidence": [
+        "docs/evidence/html/C9-取消前详情.html",
+        "docs/evidence/html/C9-取消后详情.html",
+        "docs/evidence/html/C9-我的报名.html"
+      ]
+    },
+    {
+      "id": "C10",
+      "action": "重启服务后查询活动、报名、消息",
+      "expected": "数据仍一致",
+      "actual": "活动详情仍为已通过，消息与我的报名仍存在",
+      "passed": true,
+      "evidence": [
+        "docs/evidence/html/C10-重启后详情.html",
+        "docs/evidence/html/C10-重启后消息.html"
+      ]
+    }
+  ]
+}

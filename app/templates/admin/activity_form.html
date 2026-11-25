@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}{{ '新建活动' if mode == 'new' else '编辑活动' }} · CampusEvent{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <p class="eyebrow">ADMIN · {{ 'CREATE' if mode == 'new' else 'EDIT' }}</p>
+    <h1>{{ '新建活动' if mode == 'new' else '编辑活动' }}</h1>
+    <p class="sub">
+      {% if mode == 'new' %}
+        设置名称、类型、时间、地点、人数上限与报名方式。
+      {% else %}
+        容量不能低于已通过人数；存在有效报名时不能修改报名方式。
+      {% endif %}
+    </p>
+  </div>
+  <a class="btn btn-ghost" href="{{ url_for('admin.dashboard') }}">返回列表</a>
+</div>
+
+<section class="panel" style="max-width: 860px;">
+  {% if errors %}
+    <div class="alert alert-error" style="margin-bottom: 16px;">请检查标红的字段后重新提交。</div>
+  {% endif %}
+
+  <form method="post"
+        action="{{ url_for('admin.new_activity') if mode == 'new' else url_for('admin.edit_activity', activity_id=activity.activity_id) }}"
+        class="form-stack">
+    <div class="form-grid">
+      <label class="field">
+        <span>活动名称 *</span>
+        <input type="text" name="title" maxlength="100" value="{{ form['title'] }}" placeholder="例如：数据结构期中复习讲座">
+        {% if errors.get('title') %}<em class="field-error">{{ errors.get('title') }}</em>{% endif %}
+      </label>
+
+      <label class="field">
+        <span>活动类型 *</span>
+        <input type="text" name="category" maxlength="40" value="{{ form['category'] }}" placeholder="例如：学术讲座 / 文体活动">
+        {% if errors.get('category') %}<em class="field-error">{{ errors.get('category') }}</em>{% endif %}
+      </label>
+
+      <label class="field">
+        <span>开始时间 *</span>
+        <input type="datetime-local" name="start_at" value="{{ form['start_at'] }}">
+        {% if errors.get('start_at') %}<em class="field-error">{{ errors.get('start_at') }}</em>{% endif %}
+      </label>
+
+      <label class="field">
+        <span>活动地点 *</span>
+        <input type="text" name="location" maxlength="100" value="{{ form['location'] }}" placeholder="例如：图书馆报告厅">
+        {% if errors.get('location') %}<em class="field-error">{{ errors.get('location') }}</em>{% endif %}
+      </label>
+
+      <label class="field">
+        <span>人数上限 *</span>
+        <input type="number" name="capacity" min="1" max="10000" value="{{ form['capacity'] }}" placeholder="正整数">
+        {% if errors.get('capacity') %}<em class="field-error">{{ errors.get('capacity') }}</em>{% endif %}
+      </label>
+
+      <label class="field">
+        <span>报名方式 *</span>
+        <select name="policy_type">
+          {% for value, label in POLICY_LABELS.items() %}
+            <option value="{{ value.value }}" {% if form['policy_type'] == value.value %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+        {% if errors.get('policy_type') %}<em class="field-error">{{ errors.get('policy_type') }}</em>{% endif %}
+      </label>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">{{ '创建活动' if mode == 'new' else '保存修改' }}</button>
+      <a class="btn btn-ghost" href="{{ url_for('admin.dashboard') }}">取消</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

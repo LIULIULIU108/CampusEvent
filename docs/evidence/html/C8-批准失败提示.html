@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>报名与审批 · C8 满额批准验收活动</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="/">
+        <span class="brand-mark">CE</span>
+        <span class="brand-text">CampusEvent<small>校园活动报名与管理</small></span>
+      </a>
+      <nav class="main-nav">
+        
+          
+            <a href="/admin/">活动管理</a>
+          
+          <span class="user-chip">校园管理员 · 管理员</span>
+          <form method="post" action="/logout" class="inline-form">
+            <button type="submit" class="link-button">退出</button>
+          </form>
+        
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    
+      
+        <div class="flash-stack">
+          
+            <div class="alert alert-error">名额已满，无法批准；报名保持待审核</div>
+          
+        </div>
+      
+    
+
+    
+<div class="page-head">
+  <div>
+    <p class="eyebrow">ADMIN · REGISTRATIONS</p>
+    <h1>C8 满额批准验收活动</h1>
+    <p class="sub">2026-12-03 14:00 · 验收楼 A101 · 审核报名</p>
+  </div>
+  <div style="display:flex; gap:8px; flex-wrap:wrap;">
+    <a class="btn btn-ghost" href="/admin/">返回列表</a>
+    <a class="btn btn-ghost" href="/admin/activities/6/edit">编辑活动</a>
+  </div>
+</div>
+
+<div class="card-grid" style="grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); margin-bottom: 22px;">
+  <div class="card"><div class="stat"><div class="num">1</div><div class="label">已通过</div></div></div>
+  <div class="card"><div class="stat"><div class="num">1</div><div class="label">待审核</div></div></div>
+  <div class="card"><div class="stat"><div class="num accent">0</div><div class="label">剩余名额</div></div></div>
+  <div class="card"><div class="stat"><div class="num">1</div><div class="label">总容量</div></div></div>
+</div>
+
+<div class="notice" style="margin-bottom: 18px;">
+  批准会再次检查名额；若名额已满，批准失败且报名保持待审核。拒绝不占名额，会发送站内通知。
+</div>
+
+<section class="section">
+  <div class="section-title">
+    <h2>待审核（1）</h2>
+  </div>
+  
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr><th>学生</th><th>学号</th><th>提交时间</th><th class="actions">操作</th></tr></thead>
+        <tbody>
+          
+            
+            <tr>
+              <td class="title-cell">李四</td>
+              <td>2024002</td>
+              <td>2026-11-25 17:51</td>
+              <td class="actions">
+                <form method="post" action="/admin/registrations/8/approve" class="inline-form">
+                  <input type="hidden" name="activity_id" value="6">
+                  <button type="submit" class="btn btn-success btn-sm">批准</button>
+                </form>
+                <form method="post"
+                      action="/admin/registrations/8/reject"
+                      class="inline-form"
+                      data-confirm="确定拒绝 李四 的报名吗？">
+                  <input type="hidden" name="activity_id" value="6">
+                  <button type="submit" class="btn btn-danger btn-sm">拒绝</button>
+                </form>
+              </td>
+            </tr>
+          
+        </tbody>
+      </table>
+    </div>
+  
+</section>
+
+<section class="section">
+  <div class="section-title"><h2>已通过（1）</h2></div>
+  
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr><th>学生</th><th>学号</th><th>通过时间</th></tr></thead>
+        <tbody>
+          
+            
+            <tr>
+              <td class="title-cell">张三</td>
+              <td>2024001</td>
+              <td>2026-11-25 17:51</td>
+            </tr>
+          
+        </tbody>
+      </table>
+    </div>
+  
+</section>
+
+<section class="section">
+  <div class="section-title"><h2>历史记录（0）</h2></div>
+  
+    <div class="empty">没有已拒绝或已取消记录。</div>
+  
+</section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>CampusEvent · 软件工程实验二 · 24计科2班 刘东梁</span>
+      <a href="https://thevibehosting.com" target="_blank" rel="noopener">
+        Best instant hosting for LLM agents / Claude Code / Codex -&gt; https://thevibehosting.com
+      </a>
+    </div>
+  </footer>
+
+  <script src="/static/app.js" defer></script>
+</body>
+</html>

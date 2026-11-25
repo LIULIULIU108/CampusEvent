@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}登录 · CampusEvent{% endblock %}
+
+{% block content %}
+<section class="login-layout">
+  <div class="login-panel">
+    <p class="eyebrow">SOFTWARE ENGINEERING · LAB 2</p>
+    <h1>校园活动报名与管理系统</h1>
+    <p class="muted">学生浏览活动并报名，管理员发布活动并审批。两类报名规则与站内通知。</p>
+
+    {% if errors.__all__ %}
+      <div class="alert alert-error">{{ errors.__all__ }}</div>
+    {% endif %}
+
+    <form method="post" class="form-stack" autocomplete="off">
+      <input type="hidden" name="next" value="{{ next }}">
+      <label class="field">
+        <span>账号</span>
+        <input type="text" name="account_id" value="{{ form.account_id }}" placeholder="学号或 admin" autofocus>
+        {% if errors.account_id %}<em class="field-error">{{ errors.account_id }}</em>{% endif %}
+      </label>
+      <label class="field">
+        <span>密码</span>
+        <input type="password" name="password" value="" placeholder="演示密码见下方">
+        {% if errors.password %}<em class="field-error">{{ errors.password }}</em>{% endif %}
+      </label>
+      <button type="submit" class="btn btn-primary btn-block">登录</button>
+    </form>
+
+    <div class="demo-box">
+      <h2>演示账号</h2>
+      <table class="mini-table">
+        <tbody>
+          <tr><th>管理员</th><td><code>admin</code> / <code>admin123</code></td></tr>
+          <tr><th>学生</th><td><code>2024001</code> / <code>123456</code></td></tr>
+          <tr><th>学生</th><td><code>2024002</code> / <code>123456</code></td></tr>
+          <tr><th>学生</th><td><code>2024003</code> / <code>123456</code></td></tr>
+        </tbody>
+      </table>
+      <p class="muted small">课程演示数据，请勿放入真实个人信息。</p>
+    </div>
+  </div>
+
+  <aside class="login-aside">
+    <h2>初始版本能力</h2>
+    <ul class="feature-list">
+      <li><strong>活动管理</strong><span>管理员创建、编辑、删除活动</span></li>
+      <li><strong>两类报名</strong><span>直接报名自动通过；审核型进入待审核</span></li>
+      <li><strong>审批与统计</strong><span>批准时复查名额，实时看剩余名额</span></li>
+      <li><strong>站内通知</strong><span>报名与审核结果写入消息列表</span></li>
+    </ul>
+    <div class="aside-note">
+      <p>实验二 · baseline-v1</p>
+      <p>需求变更阶段将在教师发布 CR 后继续。</p>
+    </div>
+  </aside>
+</section>
+{% endblock %}

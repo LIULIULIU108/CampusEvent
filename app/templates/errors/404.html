@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}404 · CampusEvent{% endblock %}
+{% block content %}
+<div class="error-page">
+  <div class="error-code">404</div>
+  <h1>页面或活动不存在</h1>
+  <p class="muted">请检查地址，或返回活动列表重新选择。</p>
+  <a class="btn btn-primary" href="{{ url_for('auth.index') }}">返回首页</a>
+</div>
+{% endblock %}
