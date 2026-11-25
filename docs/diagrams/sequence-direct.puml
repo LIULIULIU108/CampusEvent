@@ -1,0 +1,49 @@
+@startuml
+skinparam defaultFontName "Microsoft YaHei"
+skinparam dpi 160
+skinparam shadowing false
+autonumber
+
+title 直接报名时序图（成功与满额分支）
+
+actor 学生 as S
+participant "Web/活动详情" as W
+participant "RegistrationService" as RS
+participant "ActivityRepository" as AR
+participant "RegistrationRepository" as RR
+participant "PolicyRegistry" as PR
+participant "DirectPolicy" as DP
+participant "EventPublisher" as EP
+participant "InAppObserver" as OB
+participant "MessageRepository" as MR
+database "SQLite" as DB
+
+S -> W : 提交报名
+W -> RS : register(student_id, activity_id)
+RS -> AR : get(activity_id)
+AR -> DB : SELECT activity
+DB --> AR : activity
+AR --> RS : activity
+RS -> RS : 校验活动未开始、无有效报名
+RS -> RR : count_approved(activity_id)
+RR -> DB : SELECT COUNT(*) status='APPROVED'
+DB --> RR : approved_count
+RS -> PR : resolve(DIRECT)
+PR --> RS : DirectRegistrationPolicy
+RS -> DP : decide(context)
+alt 剩余名额 > 0
+  DP --> RS : APPROVED
+  RS -> RR : create(APPROVED)  [BEGIN IMMEDIATE]
+  RR -> DB : INSERT registration
+  RS -> EP : publish(REGISTRATION_APPROVED)  [事务提交后]
+  EP -> OB : handle(event)
+  OB -> MR : create(message)
+  MR -> DB : INSERT message
+  RS --> W : registration
+  W --> S : 报名成功，站内消息 +1
+else 名额已满
+  DP --> RS : rejected("名额已满")
+  RS --> W : DomainError
+  W --> S : 提示名额已满，不产生报名记录
+end
+@enduml

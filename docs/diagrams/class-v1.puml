@@ -1,0 +1,163 @@
+@startuml
+!pragma layout smetana
+skinparam defaultFontName "Microsoft YaHei"
+skinparam dpi 160
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+hide empty members
+
+title CampusEvent 初版类图（baseline-v1）
+
+package "领域层 domain" {
+  class Student <<entity>> {
+    +student_id: str
+    +name: str
+    +password_hash: str
+  }
+  class Activity <<entity>> {
+    +activity_id: int
+    +title: str
+    +category: str
+    +start_at: datetime
+    +location: str
+    +capacity: int
+    +policy_type: PolicyType
+    +is_open(now): bool
+    +remaining(approved_count): int
+  }
+  class Registration <<entity>> {
+    +registration_id: int
+    +activity_id: int
+    +student_id: str
+    +status: RegistrationStatus
+    +created_at: datetime
+    +updated_at: datetime
+    +is_active(): bool
+  }
+  class Message <<entity>> {
+    +message_id: int
+    +student_id: str
+    +activity_id: int
+    +content: str
+    +is_read: bool
+    +created_at: datetime
+  }
+  enum PolicyType {
+    DIRECT
+    APPROVAL
+  }
+  enum RegistrationStatus {
+    PENDING
+    APPROVED
+    REJECTED
+    CANCELLED
+  }
+  class RegistrationContext {
+    +activity: Activity
+    +student: Student
+    +approved_count: int
+    +now: datetime
+  }
+  class PolicyDecision {
+    +accepted: bool
+    +status: RegistrationStatus
+    +reason: str
+  }
+  interface RegistrationPolicy <<interface>> {
+    +policy_type: PolicyType
+    +decide(ctx: RegistrationContext): PolicyDecision
+  }
+  class DirectRegistrationPolicy
+  class ApprovalRegistrationPolicy
+  class PolicyRegistry {
+    +resolve(policy_type): RegistrationPolicy
+  }
+  class CapacityChecker {
+    +has_capacity(activity, approved_count): bool
+  }
+}
+
+package "事件与通知 events" {
+  class DomainEvent {
+    +event_id: str
+    +event_type: str
+    +activity_id: int
+    +student_id: str
+    +registration_id: int
+    +occurred_at: datetime
+    +payload: dict
+  }
+  class EventPublisher {
+    +publish(event): void
+  }
+  interface NotificationObserver <<interface>> {
+    +channel: str
+    +handle(event, conn): void
+  }
+  class InAppNotificationObserver
+}
+
+package "应用服务 services" {
+  class AuthService
+  class ActivityService
+  class RegistrationService {
+    +register(student_id, activity_id): Registration
+    +cancel(student_id, registration_id): void
+  }
+  class ApprovalService {
+    +approve(registration_id): void
+    +reject(registration_id): void
+  }
+  class MessageService
+  class StatisticsService
+}
+
+package "仓储 repositories" {
+  class StudentRepository
+  class ActivityRepository
+  class RegistrationRepository
+  class MessageRepository
+  class NotificationAttemptRepository
+}
+
+Activity "1" -- "*" Registration : 包含
+Student "1" -- "*" Registration : 提交
+Activity "1" -- "*" Message : 关联
+Student "1" -- "*" Message : 接收
+Activity --> PolicyType
+Registration --> RegistrationStatus
+
+RegistrationPolicy <|.. DirectRegistrationPolicy
+RegistrationPolicy <|.. ApprovalRegistrationPolicy
+PolicyRegistry o-- RegistrationPolicy
+RegistrationService --> PolicyRegistry
+RegistrationService ..> RegistrationPolicy : 依赖抽象
+DirectRegistrationPolicy --> CapacityChecker
+ApprovalService --> CapacityChecker
+
+RegistrationService --> RegistrationRepository
+RegistrationService --> ActivityRepository
+RegistrationService --> EventPublisher
+ApprovalService --> RegistrationRepository
+ApprovalService --> EventPublisher
+ActivityService --> ActivityRepository
+MessageService --> MessageRepository
+StatisticsService --> RegistrationRepository
+
+EventPublisher o-- NotificationObserver
+NotificationObserver <|.. InAppNotificationObserver
+InAppNotificationObserver --> MessageRepository
+EventPublisher --> NotificationAttemptRepository
+
+note right of CapacityChecker
+  名额判断由策略/审批服务复用，
+  不硬编码在报名主流程
+end note
+
+note bottom of EventPublisher
+  业务事务提交后发布；
+  单个观察者失败只留痕，不回滚报名
+end note
+
+@enduml

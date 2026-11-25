@@ -1,0 +1,34 @@
+@startuml
+skinparam defaultFontName "Microsoft YaHei"
+skinparam dpi 160
+skinparam shadowing false
+autonumber
+
+title 审核型报名提交时序图
+
+actor 学生 as S
+participant "Web/活动详情" as W
+participant "RegistrationService" as RS
+participant "RegistrationRepository" as RR
+participant "ApprovalPolicy" as AP
+participant "EventPublisher" as EP
+participant "InAppObserver" as OB
+participant "MessageRepository" as MR
+database "SQLite" as DB
+
+S -> W : 申请报名
+W -> RS : register(student_id, activity_id)
+RS -> RS : 公共校验（未开始、无有效报名）
+RS -> RR : count_approved(activity_id)
+RR --> RS : approved_count
+RS -> AP : decide(context)
+AP --> RS : PENDING
+RS -> RR : create(PENDING)  [BEGIN IMMEDIATE]
+RR -> DB : INSERT registration status='PENDING'
+RS -> EP : publish(REGISTRATION_PENDING)  [提交后]
+EP -> OB : handle(event)
+OB -> MR : create("等待管理员审核")
+MR -> DB : INSERT message
+RS --> W : registration(PENDING)
+W --> S : 报名已提交，等待审核
+@enduml

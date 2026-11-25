@@ -1,0 +1,61 @@
+@startuml
+!pragma layout smetana
+skinparam defaultFontName "Microsoft YaHei"
+skinparam dpi 160
+skinparam shadowing false
+skinparam packageStyle rectangle
+
+title CampusEvent 组件与依赖方向
+
+actor "学生 / 管理员" as User
+package "Web 层" {
+  [Flask 路由 / Jinja 模板] as Web
+  [会话与角色校验] as Auth
+}
+package "应用服务层" {
+  [RegistrationService] as RegSvc
+  [ApprovalService] as AppSvc
+  [ActivityService] as ActSvc
+  [MessageService] as MsgSvc
+}
+package "领域层" {
+  [RegistrationPolicy\n(Direct / Approval)] as Policy
+  [PolicyRegistry] as Registry
+  [CapacityChecker] as Cap
+  [EventPublisher] as Pub
+  [InAppNotificationObserver] as Obs
+  [实体 / 状态机] as Domain
+}
+package "持久化层" {
+  [Repositories] as Repo
+}
+database "SQLite\ninstance/campus_event.db" as DB
+
+User --> Web
+Web --> Auth
+Web --> RegSvc
+Web --> AppSvc
+Web --> ActSvc
+Web --> MsgSvc
+RegSvc --> Registry
+Registry --> Policy
+RegSvc --> Cap
+AppSvc --> Cap
+RegSvc --> Repo
+AppSvc --> Repo
+ActSvc --> Repo
+MsgSvc --> Repo
+RegSvc --> Pub
+AppSvc --> Pub
+Pub --> Obs
+Obs --> Repo
+Repo --> DB
+RegSvc --> Domain
+AppSvc --> Domain
+
+note right of Pub
+  报名/审批事务提交后发布事件；
+  通知失败写入 notification_attempt
+end note
+
+@enduml

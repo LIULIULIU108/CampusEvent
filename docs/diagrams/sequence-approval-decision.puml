@@ -1,0 +1,54 @@
+@startuml
+skinparam defaultFontName "Microsoft YaHei"
+skinparam dpi 160
+skinparam shadowing false
+autonumber
+
+title 管理员审批时序图（批准 / 拒绝）
+
+actor 管理员 as A
+participant "Web/审批页" as W
+participant "ApprovalService" as AS
+participant "RegistrationRepository" as RR
+participant "CapacityChecker" as CC
+participant "EventPublisher" as EP
+participant "InAppObserver" as OB
+participant "MessageRepository" as MR
+database "SQLite" as DB
+
+A -> W : 点击批准
+W -> AS : approve(registration_id)
+AS -> RR : get(registration_id)
+RR -> DB : SELECT registration
+DB --> RR : registration
+RR --> AS : registration(status=PENDING)
+AS -> RR : get(activity_id)
+AS -> AS : 校验活动未开始
+AS -> RR : count_approved(activity_id)
+RR --> AS : approved_count
+AS -> CC : has_capacity(activity, approved_count)
+alt 有名额
+  CC --> AS : true
+  AS -> RR : update_status(APPROVED)  [BEGIN IMMEDIATE]
+  RR -> DB : UPDATE ... WHERE status='PENDING'
+  AS -> EP : publish(REGISTRATION_APPROVED)
+  EP -> OB : handle(event)
+  OB -> MR : create("审核通过")
+  MR -> DB : INSERT message
+  AS --> W : success
+  W --> A : 已批准，学生收到通知
+else 名额已满
+  CC --> AS : false
+  AS --> W : DomainError("名额已满")
+  W --> A : 批准失败，报名保持待审核
+end
+
+A -> W : 点击拒绝
+W -> AS : reject(registration_id)
+AS -> RR : update_status(REJECTED) WHERE status='PENDING'
+AS -> EP : publish(REGISTRATION_REJECTED)
+EP -> OB : handle(event)
+OB -> MR : create("审核未通过")
+AS --> W : success
+W --> A : 已拒绝
+@enduml

@@ -1,0 +1,28 @@
+@startuml
+!pragma layout smetana
+skinparam defaultFontName "Microsoft YaHei"
+skinparam dpi 160
+skinparam shadowing false
+
+title 报名状态机（baseline-v1）
+
+[*] --> APPROVED : 直接报名且名额充足
+[*] --> PENDING : 审核型报名提交
+PENDING --> APPROVED : 管理员批准（再次检查名额）
+PENDING --> REJECTED : 管理员拒绝
+PENDING --> CANCELLED : 学生取消
+APPROVED --> CANCELLED : 学生取消
+REJECTED --> [*]
+CANCELLED --> [*]
+
+note right of APPROVED
+  已通过报名占用名额；
+  取消后统计剩余名额同步增加
+end note
+
+note bottom of PENDING
+  待审核不占名额；
+  批准失败时保持待审核
+end note
+
+@enduml
