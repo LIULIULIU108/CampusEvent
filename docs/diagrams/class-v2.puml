@@ -1,0 +1,171 @@
+@startuml
+!pragma layout smetana
+skinparam defaultFontName "Microsoft YaHei"
+skinparam dpi 160
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+hide empty members
+
+title CampusEvent 变更版类图（change-v2：CR-01 + CR-02）
+
+package "领域层 domain" {
+  class Student <<entity>> {
+    +student_id: str
+    +name: str
+    +grade: int  {1—4}
+  }
+  class Activity <<entity>> {
+    +activity_id: int
+    +title: str
+    +capacity: int
+    +policy_type: PolicyType
+    +is_open(now): bool
+    +remaining(approved_count): int
+  }
+  class Registration <<entity>> {
+    +registration_id: int
+    +status: RegistrationStatus
+  }
+  class Message <<entity>> {
+    +message_id: int
+    +student_id: str
+    +content: str
+  }
+  class EmailRecord <<entity>> {
+    +email_id: int
+    +event_id: str
+    +recipient: str
+    +subject: str
+    +content: str
+    +status: str
+    +error: str
+  }
+  enum PolicyType {
+    DIRECT
+    APPROVAL
+    GRADE_DIRECT
+  }
+  enum RegistrationStatus {
+    PENDING
+    APPROVED
+    REJECTED
+    CANCELLED
+  }
+  interface RegistrationPolicy <<interface>> {
+    +policy_type: PolicyType
+    +decide(ctx): PolicyDecision
+  }
+  class DirectRegistrationPolicy
+  class ApprovalRegistrationPolicy
+  class GradeLimitedDirectRegistrationPolicy {
+    +allowed_grades = {2,3}
+    +decide(ctx): PolicyDecision
+  }
+  class PolicyRegistry {
+    +resolve(type): RegistrationPolicy
+  }
+  class CapacityChecker {
+    +has_capacity(activity, approved_count): bool
+  }
+}
+
+package "事件与通知 events" {
+  class DomainEvent
+  class EventPublisher {
+    +publish(event, conn): void
+    +supports / on_error 分派
+  }
+  interface NotificationObserver <<interface>> {
+    +channel: str
+    +handle(event, conn): void
+  }
+  class InAppNotificationObserver {
+    +channel = "in_app"
+  }
+  class EmailNotificationObserver {
+    +channel = "email"
+    +supports(event): bool
+    +handle(event, conn): void
+    +on_error(event, conn, error): void
+  }
+  class MockEmailSender {
+    +fail: bool
+    +send(recipient, subject, content): void
+  }
+}
+
+package "应用服务 services" {
+  class RegistrationService {
+    +register(student_id, activity_id): Registration
+    +cancel(student_id, registration_id): void
+  }
+  class ApprovalService
+  class EmailLogService {
+    +list_all(): list
+  }
+}
+
+package "仓储 repositories" {
+  class StudentRepository
+  class ActivityRepository
+  class RegistrationRepository
+  class MessageRepository
+  class NotificationAttemptRepository
+  class EmailOutboxRepository {
+    +create_pending(...): int
+    +mark_sent(event_id, now): void
+    +record_failure(...): void
+    +list_all(): list
+  }
+}
+
+Student "1" -- "*" Registration
+Activity "1" -- "*" Registration
+Activity "1" -- "*" Message
+Student "1" -- "*" Message
+Activity --> PolicyType
+Registration --> RegistrationStatus
+
+RegistrationPolicy <|.. DirectRegistrationPolicy
+RegistrationPolicy <|.. ApprovalRegistrationPolicy
+RegistrationPolicy <|.. GradeLimitedDirectRegistrationPolicy
+PolicyRegistry o-- RegistrationPolicy
+RegistrationService --> PolicyRegistry
+DirectRegistrationPolicy --> CapacityChecker
+GradeLimitedDirectRegistrationPolicy --> CapacityChecker
+ApprovalService --> CapacityChecker
+
+RegistrationService --> ActivityRepository
+RegistrationService --> StudentRepository
+RegistrationService --> RegistrationRepository
+RegistrationService --> EventPublisher
+ApprovalService --> RegistrationRepository
+ApprovalService --> EventPublisher
+
+EventPublisher o-- NotificationObserver
+NotificationObserver <|.. InAppNotificationObserver
+NotificationObserver <|.. EmailNotificationObserver
+InAppNotificationObserver --> MessageRepository
+EmailNotificationObserver --> EmailOutboxRepository
+EmailNotificationObserver --> MockEmailSender
+EmailOutboxRepository --> EmailRecord
+EventPublisher --> NotificationAttemptRepository
+EmailLogService --> EmailOutboxRepository
+
+note right of GradeLimitedDirectRegistrationPolicy
+  CR-01：新增策略实现；
+  RegistrationService 主流程未改
+end note
+
+note bottom of EmailNotificationObserver
+  CR-02：新增观察者，与站内消息并行；
+  事件级 event_id 幂等，失败写 FAILED
+end note
+
+note bottom of EventPublisher
+  新增 supports()：待审核事件不订阅邮件；
+  新增 on_error()：邮件失败留痕
+end note
+
+@enduml

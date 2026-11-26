@@ -7,8 +7,11 @@ import os
 import re
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SRC = os.path.join(ROOT, "docs", "evidence", "html")
-DST = os.path.join(ROOT, "docs", "evidence", "screens")
+EVIDENCE = os.environ.get(
+    "CAMPUSEVENT_EVIDENCE_DIR", os.path.join(ROOT, "docs", "evidence")
+)
+SRC = os.path.join(EVIDENCE, "html")
+DST = os.path.join(EVIDENCE, "screens")
 CSS_PATH = os.path.join(ROOT, "app", "static", "style.css")
 
 

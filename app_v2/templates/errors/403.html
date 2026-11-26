@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}403 · CampusEvent{% endblock %}
+{% block content %}
+<div class="error-page">
+  <div class="error-code">403</div>
+  <h1>没有权限</h1>
+  <p class="muted">当前账号不能执行这个操作。学生与管理员使用不同的功能入口。</p>
+  <a class="btn btn-primary" href="{{ url_for('auth.index') }}">返回首页</a>
+</div>
+{% endblock %}

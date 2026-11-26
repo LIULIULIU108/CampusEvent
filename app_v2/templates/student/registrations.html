@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}我的报名 · CampusEvent{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <p class="eyebrow">MY REGISTRATIONS</p>
+    <h1>我的报名</h1>
+    <p class="sub">查看报名状态；待审核和已通过报名可以取消，历史记录会保留。</p>
+  </div>
+  <a class="btn btn-ghost" href="{{ url_for('student.activities') }}">浏览活动</a>
+</div>
+
+{% if items %}
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>活动</th>
+          <th>报名方式</th>
+          <th>活动时间</th>
+          <th>报名状态</th>
+          <th>提交时间</th>
+          <th class="actions">操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+          {% set r = item.registration %}
+          {% set a = item.activity %}
+          <tr>
+            <td class="title-cell">
+              <a href="{{ url_for('student.activity_detail', activity_id=a.activity_id) }}">{{ a.title }}</a>
+              <div class="muted small">{{ a.location }}</div>
+            </td>
+            <td><span class="badge badge-{{ a.policy_type.value|lower }}">{{ a.policy_type|policy_label }}</span></td>
+            <td>{{ a.start_at|dt }}</td>
+            <td><span class="badge badge-{{ r.status|status_class }}">{{ r.status|status_label }}</span></td>
+            <td>{{ r.created_at|dt }}</td>
+            <td class="actions">
+              {% if r.status.value in ('PENDING', 'APPROVED') %}
+                <form method="post"
+                      action="{{ url_for('student.cancel', registration_id=r.registration_id) }}"
+                      class="inline-form"
+                      data-confirm="确定取消这次报名吗？">
+                  <input type="hidden" name="next" value="{{ url_for('student.registrations') }}">
+                  <button type="submit" class="btn btn-danger btn-sm">取消</button>
+                </form>
+              {% else %}
+                <span class="muted small">已结束</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <div class="empty">还没有报名记录。<a href="{{ url_for('student.activities') }}">去看看活动</a></div>
+{% endif %}
+{% endblock %}

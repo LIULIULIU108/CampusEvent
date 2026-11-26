@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}{{ activity.title }} · CampusEvent{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <p class="eyebrow">ACTIVITY DETAIL</p>
+    <h1>{{ activity.title }}</h1>
+    <p class="sub">{{ activity.category }} · {{ activity.policy_type|policy_label }}</p>
+  </div>
+  <a class="btn btn-ghost" href="{{ url_for('student.activities') }}">返回活动列表</a>
+</div>
+
+<div class="detail-grid">
+  <section class="panel">
+    <span class="badge badge-{{ activity.policy_type.value|lower }}">{{ activity.policy_type|policy_label }}</span>
+    <div class="info-grid">
+      <div class="info-item"><div class="k">开始时间</div><div class="v">{{ activity.start_at|dt }}</div></div>
+      <div class="info-item"><div class="k">活动地点</div><div class="v">{{ activity.location }}</div></div>
+      <div class="info-item"><div class="k">人数上限</div><div class="v">{{ activity.capacity }} 人</div></div>
+      <div class="info-item"><div class="k">报名状态</div><div class="v">{{ '报名进行中' if activity.is_open(now) else '活动已开始' }}</div></div>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><h2>名额与统计</h2></div>
+      <div class="stat-row">
+        <div class="stat"><div class="num accent">{{ stats.remaining }}</div><div class="label">剩余名额</div></div>
+        <div class="stat"><div class="num">{{ stats.approved_count }}</div><div class="label">已通过</div></div>
+        <div class="stat"><div class="num">{{ stats.pending_count }}</div><div class="label">待审核</div></div>
+        <div class="stat"><div class="num">{{ stats.capacity }}</div><div class="label">总容量</div></div>
+      </div>
+    </div>
+
+    {% if activity.policy_type.value == 'APPROVAL' %}
+      <div class="notice" style="margin-top: 18px;">
+        审核型报名：提交后进入待审核，管理员批准时再次检查名额；待审核不占名额。
+      </div>
+    {% elif activity.policy_type.value == 'GRADE_DIRECT' %}
+      <div class="notice" style="margin-top: 18px;">
+        年级限定报名：仅大二、大三学生可以报名；其他年级会被拒绝。名额、开始时间和重复报名规则与其他活动一致。
+      </div>
+    {% else %}
+      <div class="notice" style="margin-top: 18px;">
+        直接报名：有名额时立即通过；满额后报名失败，不会产生报名记录。
+      </div>
+    {% endif %}
+  </section>
+
+  <aside class="panel">
+    <h2>我的报名</h2>
+    {% if my_registration %}
+      <p>当前状态：<span class="badge badge-{{ my_registration.status|status_class }}">{{ my_registration.status|status_label }}</span></p>
+      <p class="muted small">创建于 {{ my_registration.created_at|dt }}</p>
+      <div class="action-stack">
+        <form method="post"
+              action="{{ url_for('student.cancel', registration_id=my_registration.registration_id) }}"
+              data-confirm="确定取消这次报名吗？取消后名额会释放。">
+          <input type="hidden" name="next" value="{{ url_for('student.activity_detail', activity_id=activity.activity_id) }}">
+          <button type="submit" class="btn btn-danger btn-block">取消报名</button>
+        </form>
+        <a class="btn btn-ghost btn-block" href="{{ url_for('student.messages') }}">查看站内消息</a>
+      </div>
+    {% elif not activity.is_open(now) %}
+      <div class="notice">活动已开始，不能新增报名。</div>
+    {% elif stats.remaining <= 0 and activity.policy_type.value in ('DIRECT', 'GRADE_DIRECT') %}
+      <div class="notice">名额已满，暂时无法报名。</div>
+      <a class="btn btn-ghost btn-block" href="{{ url_for('student.activities') }}" style="margin-top:10px;">看看其他活动</a>
+    {% else %}
+      <p class="muted">
+        {% if activity.policy_type.value == 'DIRECT' %}
+          提交后立即占用一个名额并自动通过。
+        {% elif activity.policy_type.value == 'GRADE_DIRECT' %}
+          仅大二、大三学生可提交；提交后立即占用一个名额并自动通过。
+        {% else %}
+          提交后进入待审核，管理员批准后才会占用名额。
+        {% endif %}
+      </p>
+      <form method="post" action="{{ url_for('student.register', activity_id=activity.activity_id) }}">
+        <button type="submit" class="btn btn-primary btn-block">
+          {{ '立即报名' if activity.policy_type.value in ('DIRECT', 'GRADE_DIRECT') else '提交报名申请' }}
+        </button>
+      </form>
+    {% endif %}
+  </aside>
+</div>
+{% endblock %}

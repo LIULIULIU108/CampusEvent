@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}站内消息 · CampusEvent{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <p class="eyebrow">INBOX</p>
+    <h1>站内消息</h1>
+    <p class="sub">报名结果与审核结果会写入这里；通知失败会在后台留痕，不会影响报名记录。</p>
+  </div>
+  {% if messages %}
+    <form method="post" action="{{ url_for('student.read_all_messages') }}">
+      <button type="submit" class="btn btn-ghost">全部标为已读</button>
+    </form>
+  {% endif %}
+</div>
+
+{% if messages %}
+  <div class="message-list">
+    {% for message in messages %}
+      <div class="message-item {{ '' if message.is_read else 'unread' }}">
+        <div class="body">
+          <p>{{ message.content }}</p>
+          <span class="time">{{ message.created_at|dt }}{% if message.activity_id %} ·
+            <a href="{{ url_for('student.activity_detail', activity_id=message.activity_id) }}">查看活动</a>
+          {% endif %}</span>
+        </div>
+        {% if not message.is_read %}
+          <form method="post" action="{{ url_for('student.read_message', message_id=message.message_id) }}">
+            <button type="submit" class="btn btn-sm">标为已读</button>
+          </form>
+        {% else %}
+          <span class="muted small">已读</span>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="empty">暂无消息。报名或审核结果产生后会显示在这里。</div>
+{% endif %}
+{% endblock %}

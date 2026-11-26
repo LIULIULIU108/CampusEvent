@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>C5 审核报名验收活动 · CampusEvent</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="/">
+        <span class="brand-mark">CE</span>
+        <span class="brand-text">CampusEvent<small>校园活动报名与管理</small></span>
+      </a>
+      <nav class="main-nav">
+        
+          
+            <a href="/activities">活动列表</a>
+            <a href="/me/registrations">我的报名</a>
+            <a href="/me/messages">
+              站内消息
+              <span class="nav-badge">3</span>
+            </a>
+          
+          <span class="user-chip">张三 · 学生</span>
+          <form method="post" action="/logout" class="inline-form">
+            <button type="submit" class="link-button">退出</button>
+          </form>
+        
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    
+      
+        <div class="flash-stack">
+          
+            <div class="alert alert-success">报名已提交，等待管理员审核。</div>
+          
+        </div>
+      
+    
+
+    
+<div class="page-head">
+  <div>
+    <p class="eyebrow">ACTIVITY DETAIL</p>
+    <h1>C5 审核报名验收活动</h1>
+    <p class="sub">验收测试 · 审核报名</p>
+  </div>
+  <a class="btn btn-ghost" href="/activities">返回活动列表</a>
+</div>
+
+<div class="detail-grid">
+  <section class="panel">
+    <span class="badge badge-approval">审核报名</span>
+    <div class="info-grid">
+      <div class="info-item"><div class="k">开始时间</div><div class="v">2026-12-01 14:00</div></div>
+      <div class="info-item"><div class="k">活动地点</div><div class="v">验收楼 A101</div></div>
+      <div class="info-item"><div class="k">人数上限</div><div class="v">2 人</div></div>
+      <div class="info-item"><div class="k">报名状态</div><div class="v">报名进行中</div></div>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><h2>名额与统计</h2></div>
+      <div class="stat-row">
+        <div class="stat"><div class="num accent">2</div><div class="label">剩余名额</div></div>
+        <div class="stat"><div class="num">0</div><div class="label">已通过</div></div>
+        <div class="stat"><div class="num">1</div><div class="label">待审核</div></div>
+        <div class="stat"><div class="num">2</div><div class="label">总容量</div></div>
+      </div>
+    </div>
+
+    
+      <div class="notice" style="margin-top: 18px;">
+        审核型报名：提交后进入待审核，管理员批准时再次检查名额；待审核不占名额。
+      </div>
+    
+  </section>
+
+  <aside class="panel">
+    <h2>我的报名</h2>
+    
+      <p>当前状态：<span class="badge badge-pending">待审核</span></p>
+      <p class="muted small">创建于 2026-11-26 16:49</p>
+      <div class="action-stack">
+        <form method="post"
+              action="/registrations/4/cancel"
+              data-confirm="确定取消这次报名吗？取消后名额会释放。">
+          <input type="hidden" name="next" value="/activities/3">
+          <button type="submit" class="btn btn-danger btn-block">取消报名</button>
+        </form>
+        <a class="btn btn-ghost btn-block" href="/me/messages">查看站内消息</a>
+      </div>
+    
+  </aside>
+</div>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>CampusEvent · 软件工程实验二 · 24计科2班 刘东梁</span>
+      <a href="https://thevibehosting.com" target="_blank" rel="noopener">
+        Best instant hosting for LLM agents / Claude Code / Codex -&gt; https://thevibehosting.com
+      </a>
+    </div>
+  </footer>
+
+  <script src="/static/app.js" defer></script>
+</body>
+</html>

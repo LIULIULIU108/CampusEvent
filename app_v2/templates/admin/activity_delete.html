@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}删除活动 · CampusEvent{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <p class="eyebrow">ADMIN · DELETE</p>
+    <h1>删除活动</h1>
+    <p class="sub">删除操作不可恢复；已有报名的活动会被拒绝删除。</p>
+  </div>
+  <a class="btn btn-ghost" href="{{ url_for('admin.dashboard') }}">返回列表</a>
+</div>
+
+<section class="panel" style="max-width: 720px;">
+  <h2>{{ activity.title }}</h2>
+  <p class="muted">{{ activity.category }} · {{ activity.start_at|dt }} · {{ activity.location }}</p>
+
+  <div class="stat-row">
+    <div class="stat"><div class="num">{{ stats.approved_count }}</div><div class="label">已通过</div></div>
+    <div class="stat"><div class="num">{{ stats.pending_count }}</div><div class="label">待审核</div></div>
+    <div class="stat"><div class="num">{{ registration_count }}</div><div class="label">报名记录总数</div></div>
+  </div>
+
+  {% if registration_count > 0 %}
+    <div class="alert alert-error" style="margin-top: 18px;">
+      该活动已有 {{ registration_count }} 条报名记录（含历史记录），按规则不能删除。
+      可以保留活动，或先处理报名。
+    </div>
+    <div class="form-actions">
+      <a class="btn btn-primary" href="{{ url_for('admin.activity_registrations', activity_id=activity.activity_id) }}">查看报名</a>
+      <a class="btn btn-ghost" href="{{ url_for('admin.dashboard') }}">返回</a>
+    </div>
+  {% else %}
+    <div class="notice" style="margin-top: 18px;">该活动没有报名记录，可以删除。</div>
+    <form method="post"
+          action="{{ url_for('admin.delete_activity', activity_id=activity.activity_id) }}"
+          class="form-actions"
+          data-confirm="确定删除活动「{{ activity.title }}」吗？此操作不可恢复。">
+      <button type="submit" class="btn btn-danger">确认删除</button>
+      <a class="btn btn-ghost" href="{{ url_for('admin.dashboard') }}">取消</a>
+    </form>
+  {% endif %}
+</section>
+{% endblock %}

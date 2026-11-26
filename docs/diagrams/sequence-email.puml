@@ -1,0 +1,43 @@
+@startuml
+skinparam defaultFontName "Microsoft YaHei"
+skinparam dpi 160
+skinparam shadowing false
+autonumber
+
+title change-v2：报名事件的双通道通知
+
+participant "RegistrationService" as RS
+participant "EventPublisher" as EP
+participant "InAppObserver" as IA
+participant "MessageRepository" as MR
+participant "EmailObserver" as EO
+participant "EmailOutboxRepository" as ER
+participant "MockEmailSender" as MS
+database "SQLite" as DB
+
+RS -> EP : publish(event)  [报名事务已提交]
+EP -> EP : observer.supports(event)?
+EP -> IA : handle(event)
+IA -> MR : create(message)
+MR -> DB : INSERT message
+EP -> EO : handle(event)
+EO -> ER : create_pending(event, recipient, subject, content)
+ER -> DB : INSERT email_outbox(PENDING)
+EO -> MS : send(recipient, subject, content)
+alt 发送成功
+  MS --> EO : ok
+  EO -> ER : mark_sent(event_id)
+  ER -> DB : UPDATE status='SENT'
+  EP -> EP : notification_attempt=SENT
+else 发送失败
+  MS --> EO : raise EmailDeliveryError
+  EP -> EP : rollback；notification_attempt=FAILED
+  EP -> EO : on_error(event, error)
+  EO -> ER : record_failure(...)
+  ER -> DB : INSERT/UPDATE email_outbox(FAILED)
+end
+note over RS,DB
+  业务报名/审批事务已经提交；
+  通知失败不回滚报名。
+end note
+@enduml
