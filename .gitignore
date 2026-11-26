@@ -25,6 +25,7 @@ probe*.txt
 # Evidence temp
 docs/evidence/**/*.tmp
 docs/evidence/screens/
+docs/evidence/**/screens/
 
 # OS / IDE
 .DS_Store

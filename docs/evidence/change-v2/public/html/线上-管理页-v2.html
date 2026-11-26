@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>活动管理 · CampusEvent</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="/">
+        <span class="brand-mark">CE</span>
+        <span class="brand-text">CampusEvent<small>校园活动报名与管理</small></span>
+      </a>
+      <nav class="main-nav">
+        
+          
+            <a href="/admin/">活动管理</a>
+            <a href="/admin/notifications">通知记录</a>
+          
+          <span class="user-chip">校园管理员 · 管理员</span>
+          <form method="post" action="/logout" class="inline-form">
+            <button type="submit" class="link-button">退出</button>
+          </form>
+        
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    
+      
+    
+
+    
+<div class="page-head">
+  <div>
+    <p class="eyebrow">ADMIN · ACTIVITIES</p>
+    <h1>活动管理</h1>
+    <p class="sub">发布活动、审批报名、查看名额。批准时会再次检查容量。</p>
+  </div>
+  <div style="display:flex; gap:8px; flex-wrap:wrap;">
+    <a class="btn btn-ghost" href="/admin/notifications">通知记录</a>
+    <a class="btn btn-primary" href="/admin/activities/new">新建活动</a>
+  </div>
+</div>
+
+<div class="card-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 22px;">
+  <div class="card">
+    <div class="stat"><div class="num accent">5</div><div class="label">活动总数</div></div>
+  </div>
+  <div class="card">
+    <div class="stat"><div class="num">0</div><div class="label">已通过报名</div></div>
+  </div>
+  <div class="card">
+    <div class="stat"><div class="num">0</div><div class="label">待审核报名</div></div>
+  </div>
+</div>
+
+
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>活动</th>
+          <th>报名方式</th>
+          <th>时间 / 地点</th>
+          <th>已通过</th>
+          <th>待审核</th>
+          <th>剩余</th>
+          <th class="actions">操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+          
+          <tr>
+            <td class="title-cell">
+              数据结构期中复习讲座
+              <div class="muted small">学术讲座 · 容量 2</div>
+            </td>
+            <td><span class="badge badge-direct">直接报名</span></td>
+            <td>2026-11-28 14:00<div class="muted small">图书馆报告厅</div></td>
+            <td>0</td>
+            <td>0</td>
+            <td><span class="badge badge-approved">2</span></td>
+            <td class="actions">
+              <a class="btn btn-sm" href="/admin/activities/1/registrations">报名/审批</a>
+              <a class="btn btn-sm" href="/admin/activities/1/edit">编辑</a>
+              <a class="btn btn-sm btn-danger" href="/admin/activities/1/delete">删除</a>
+            </td>
+          </tr>
+        
+          
+          <tr>
+            <td class="title-cell">
+              校园歌手大赛
+              <div class="muted small">文体活动 · 容量 2</div>
+            </td>
+            <td><span class="badge badge-approval">审核报名</span></td>
+            <td>2026-11-30 19:00<div class="muted small">大学生活动中心</div></td>
+            <td>0</td>
+            <td>0</td>
+            <td><span class="badge badge-approved">2</span></td>
+            <td class="actions">
+              <a class="btn btn-sm" href="/admin/activities/2/registrations">报名/审批</a>
+              <a class="btn btn-sm" href="/admin/activities/2/edit">编辑</a>
+              <a class="btn btn-sm btn-danger" href="/admin/activities/2/delete">删除</a>
+            </td>
+          </tr>
+        
+          
+          <tr>
+            <td class="title-cell">
+              软件工程实验答疑
+              <div class="muted small">学术讲座 · 容量 30</div>
+            </td>
+            <td><span class="badge badge-direct">直接报名</span></td>
+            <td>2026-12-02 15:30<div class="muted small">实验楼 A305</div></td>
+            <td>0</td>
+            <td>0</td>
+            <td><span class="badge badge-approved">30</span></td>
+            <td class="actions">
+              <a class="btn btn-sm" href="/admin/activities/3/registrations">报名/审批</a>
+              <a class="btn btn-sm" href="/admin/activities/3/edit">编辑</a>
+              <a class="btn btn-sm btn-danger" href="/admin/activities/3/delete">删除</a>
+            </td>
+          </tr>
+        
+          
+          <tr>
+            <td class="title-cell">
+              图书馆志愿服务
+              <div class="muted small">志愿服务 · 容量 10</div>
+            </td>
+            <td><span class="badge badge-approval">审核报名</span></td>
+            <td>2026-12-05 09:00<div class="muted small">图书馆一楼</div></td>
+            <td>0</td>
+            <td>0</td>
+            <td><span class="badge badge-approved">10</span></td>
+            <td class="actions">
+              <a class="btn btn-sm" href="/admin/activities/4/registrations">报名/审批</a>
+              <a class="btn btn-sm" href="/admin/activities/4/edit">编辑</a>
+              <a class="btn btn-sm btn-danger" href="/admin/activities/4/delete">删除</a>
+            </td>
+          </tr>
+        
+          
+          <tr>
+            <td class="title-cell">
+              大二大三专属科研讲座
+              <div class="muted small">学术讲座 · 容量 20</div>
+            </td>
+            <td><span class="badge badge-grade_direct">年级限定报名</span></td>
+            <td>2026-12-08 14:00<div class="muted small">学术交流中心</div></td>
+            <td>0</td>
+            <td>0</td>
+            <td><span class="badge badge-approved">20</span></td>
+            <td class="actions">
+              <a class="btn btn-sm" href="/admin/activities/5/registrations">报名/审批</a>
+              <a class="btn btn-sm" href="/admin/activities/5/edit">编辑</a>
+              <a class="btn btn-sm btn-danger" href="/admin/activities/5/delete">删除</a>
+            </td>
+          </tr>
+        
+      </tbody>
+    </table>
+  </div>
+
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>CampusEvent · 软件工程实验二 · 24计科2班 刘东梁</span>
+      <a href="https://thevibehosting.com" target="_blank" rel="noopener">
+        Best instant hosting for LLM agents / Claude Code / Codex -&gt; https://thevibehosting.com
+      </a>
+    </div>
+  </footer>
+
+  <script src="/static/app.js" defer></script>
+</body>
+</html>

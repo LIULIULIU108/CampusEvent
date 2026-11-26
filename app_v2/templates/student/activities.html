@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}活动列表 · CampusEvent{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <p class="eyebrow">STUDENT · ACTIVITIES</p>
+    <h1>校园活动</h1>
+    <p class="sub">浏览活动、查看名额并报名。直接报名立即通过，审核型报名等待管理员审批。</p>
+  </div>
+</div>
+
+<form method="get" action="{{ url_for('student.activities') }}" class="search-row">
+  <input type="text" name="q" value="{{ q }}" placeholder="按活动名称搜索，例如：讲座">
+  <button type="submit" class="btn btn-primary">搜索</button>
+  {% if q %}<a class="btn btn-ghost" href="{{ url_for('student.activities') }}">清除</a>{% endif %}
+</form>
+
+{% if activities %}
+  <div class="card-grid">
+    {% for activity in activities %}
+      {% set st = stats[activity.activity_id] %}
+      {% set mine = active.get(activity.activity_id) %}
+      <article class="card">
+        <div class="card-row" style="border:0; padding:0; margin:0 0 8px;">
+          <span class="badge badge-{{ activity.policy_type.value|lower }}">{{ activity.policy_type|policy_label }}</span>
+          {% if mine %}
+            <span class="badge badge-{{ mine.status|status_class }}">我的状态：{{ mine.status|status_label }}</span>
+          {% endif %}
+        </div>
+        <h2><a href="{{ url_for('student.activity_detail', activity_id=activity.activity_id) }}">{{ activity.title }}</a></h2>
+        <p class="meta">{{ activity.category }} · {{ activity.start_at|dt }} · {{ activity.location }}</p>
+        <div class="stat-row">
+          <div class="stat">
+            <div class="num accent">{{ st.remaining }}</div>
+            <div class="label">剩余名额</div>
+          </div>
+          <div class="stat">
+            <div class="num">{{ st.approved_count }}</div>
+            <div class="label">已通过 / {{ activity.capacity }}</div>
+          </div>
+          <div class="stat">
+            <div class="num">{{ st.pending_count }}</div>
+            <div class="label">待审核</div>
+          </div>
+        </div>
+        <div class="card-row">
+          <span class="muted small">
+            {% if activity.is_open(now) %}报名进行中{% else %}活动已开始{% endif %}
+          </span>
+          <a class="btn btn-sm" href="{{ url_for('student.activity_detail', activity_id=activity.activity_id) }}">查看详情</a>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="empty">
+    {% if q %}没有找到名称包含「{{ q }}」的活动。{% else %}暂时没有活动，等待管理员发布。{% endif %}
+  </div>
+{% endif %}
+{% endblock %}

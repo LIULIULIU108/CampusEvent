@@ -25,8 +25,10 @@ echo "== database =="
 mkdir -p /root/myapp/instance
 export CAMPUSEVENT_DATABASE=/root/myapp/instance/campus_event.db
 export CAMPUSEVENT_SECRET_KEY="$(python3 -c 'import secrets; print(secrets.token_hex(24))')"
-.venv/bin/python cli.py init-db
-.venv/bin/python cli.py seed-demo || true
+.venv/bin/python cli_v2.py init-db
+.venv/bin/python cli_v2.py seed-demo || true
+.venv/bin/python cli_v2.py set-demo-grades || true
+.venv/bin/python cli_v2.py seed-cr-demo || true
 
 echo "== run.sh =="
 SECRET=$(python3 -c 'import secrets; print(secrets.token_hex(24))')
@@ -36,11 +38,12 @@ cd /root/myapp
 export CAMPUSEVENT_DATABASE=/root/myapp/instance/campus_event.db
 export CAMPUSEVENT_SECRET_KEY=${SECRET}
 export CAMPUSEVENT_ADMIN_PASSWORD=admin123
-exec .venv/bin/gunicorn --bind 0.0.0.0:80 --workers 1 --threads 2 --timeout 60 'app:create_app()'
+exec .venv/bin/gunicorn --bind 0.0.0.0:80 --workers 1 --threads 2 --timeout 60 'app_v2:create_app_v2()'
 SH
 chmod 755 /root/run.sh
 
 echo "== restart =="
+pkill -f 'gunicorn' || true
 pkill -f '[r]un.sh' || true
 sleep 6
 

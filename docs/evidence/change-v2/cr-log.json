@@ -1,0 +1,119 @@
+{
+  "run_at": "2026-11-26T16:47:46+08:00",
+  "base_url": "http://127.0.0.1:5000",
+  "total": 11,
+  "passed": 11,
+  "records": [
+    {
+      "id": "CR1-01",
+      "action": "大二学生报名年级限定活动",
+      "expected": "通过",
+      "actual": "页面显示已通过",
+      "passed": true,
+      "evidence": [
+        "docs/evidence/change-v2/html/CR1-01-大二通过.html"
+      ]
+    },
+    {
+      "id": "CR1-02",
+      "action": "大三学生报名年级限定活动",
+      "expected": "通过",
+      "actual": "页面显示已通过",
+      "passed": true,
+      "evidence": [
+        "docs/evidence/change-v2/html/CR1-02-大三通过.html"
+      ]
+    },
+    {
+      "id": "CR1-03",
+      "action": "大一学生报名年级限定活动",
+      "expected": "拒绝并显示原因",
+      "actual": "提示该活动仅限大二、大三学生报名",
+      "passed": true,
+      "evidence": [
+        "docs/evidence/change-v2/html/CR1-03-大一拒绝.html"
+      ]
+    },
+    {
+      "id": "CR1-04",
+      "action": "大四学生报名年级限定活动",
+      "expected": "拒绝并显示原因",
+      "actual": "提示该活动仅限大二、大三学生报名",
+      "passed": true,
+      "evidence": [
+        "docs/evidence/change-v2/html/CR1-04-大四拒绝.html"
+      ]
+    },
+    {
+      "id": "CR1-05",
+      "action": "变更后重新运行 C1—C10",
+      "expected": "全部原有用例保持通过",
+      "actual": "C1—C10 真实 HTTP 回归 10/10 通过",
+      "passed": true,
+      "evidence": [
+        "docs/evidence/change-v2/regression/acceptance-log.json"
+      ]
+    },
+    {
+      "id": "CR2-01",
+      "action": "直接报名通过",
+      "expected": "站内消息和模拟邮件均有记录",
+      "actual": "详情显示已通过；通知页有 2024001@mock.campus.local 的报名成功邮件",
+      "passed": true,
+      "evidence": [
+        "docs/evidence/change-v2/html/CR2-01-直接报名.html",
+        "docs/evidence/change-v2/html/CR2-01-邮件记录.html"
+      ]
+    },
+    {
+      "id": "CR2-02",
+      "action": "审核批准或拒绝",
+      "expected": "两种渠道记录对应结果",
+      "actual": "通知页含审核通过/审核未通过两条邮件，站内消息同时存在",
+      "passed": true,
+      "evidence": [
+        "docs/evidence/change-v2/html/CR2-02-邮件记录.html"
+      ]
+    },
+    {
+      "id": "CR2-03",
+      "action": "模拟邮件发送失败",
+      "expected": "报名状态正确、错误有日志",
+      "actual": "pytest 验证：报名仍已通过，email_outbox/notification_attempt 均为 FAILED 且含错误",
+      "passed": true,
+      "evidence": [
+        "tests_v2/test_cr02_email_v2.py::test_email_failure_is_logged_and_registration_survives"
+      ]
+    },
+    {
+      "id": "CR2-04",
+      "action": "重复提交同一业务动作/事件",
+      "expected": "不应重复生成多份相同通知",
+      "actual": "pytest 验证：同一 event_id 重复发布仅 1 条站内消息、1 条邮件",
+      "passed": true,
+      "evidence": [
+        "tests_v2/test_cr02_email_v2.py::test_duplicate_event_does_not_send_twice"
+      ]
+    },
+    {
+      "id": "CR2-05",
+      "action": "变更后重新运行 C1—C10",
+      "expected": "原有功能保持通过",
+      "actual": "C1—C10 真实 HTTP 回归 10/10 通过",
+      "passed": true,
+      "evidence": [
+        "docs/evidence/change-v2/regression/acceptance-log.json"
+      ]
+    },
+    {
+      "id": "MIG-01",
+      "action": "v1 数据库升级到 v2",
+      "expected": "数据保留，grade/email_outbox 可用",
+      "actual": "pytest 迁移测试通过：数据保留、外键检查通过、grade 默认 1、email_outbox 存在",
+      "passed": true,
+      "evidence": [
+        "tests_v2/test_migration_v2_to_v2.py"
+      ]
+    }
+  ]
+}

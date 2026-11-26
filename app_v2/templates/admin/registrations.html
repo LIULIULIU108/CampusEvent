@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block title %}报名与审批 · {{ activity.title }}{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <p class="eyebrow">ADMIN · REGISTRATIONS</p>
+    <h1>{{ activity.title }}</h1>
+    <p class="sub">{{ activity.start_at|dt }} · {{ activity.location }} · {{ activity.policy_type|policy_label }}</p>
+  </div>
+  <div style="display:flex; gap:8px; flex-wrap:wrap;">
+    <a class="btn btn-ghost" href="{{ url_for('admin.dashboard') }}">返回列表</a>
+    <a class="btn btn-ghost" href="{{ url_for('admin.edit_activity', activity_id=activity.activity_id) }}">编辑活动</a>
+  </div>
+</div>
+
+<div class="card-grid" style="grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); margin-bottom: 22px;">
+  <div class="card"><div class="stat"><div class="num">{{ stats.approved_count }}</div><div class="label">已通过</div></div></div>
+  <div class="card"><div class="stat"><div class="num">{{ stats.pending_count }}</div><div class="label">待审核</div></div></div>
+  <div class="card"><div class="stat"><div class="num accent">{{ stats.remaining }}</div><div class="label">剩余名额</div></div></div>
+  <div class="card"><div class="stat"><div class="num">{{ stats.capacity }}</div><div class="label">总容量</div></div></div>
+</div>
+
+<div class="notice" style="margin-bottom: 18px;">
+  批准会再次检查名额；若名额已满，批准失败且报名保持待审核。拒绝不占名额，会发送站内通知。
+</div>
+
+<section class="section">
+  <div class="section-title">
+    <h2>待审核（{{ pending|length }}）</h2>
+  </div>
+  {% if pending %}
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr><th>学生</th><th>学号</th><th>提交时间</th><th class="actions">操作</th></tr></thead>
+        <tbody>
+          {% for item in pending %}
+            {% set r = item.registration %}
+            <tr>
+              <td class="title-cell">{{ item.student_name }}</td>
+              <td>{{ r.student_id }}</td>
+              <td>{{ r.created_at|dt }}</td>
+              <td class="actions">
+                <form method="post" action="{{ url_for('admin.approve', registration_id=r.registration_id) }}" class="inline-form">
+                  <input type="hidden" name="activity_id" value="{{ activity.activity_id }}">
+                  <button type="submit" class="btn btn-success btn-sm">批准</button>
+                </form>
+                <form method="post"
+                      action="{{ url_for('admin.reject', registration_id=r.registration_id) }}"
+                      class="inline-form"
+                      data-confirm="确定拒绝 {{ item.student_name }} 的报名吗？">
+                  <input type="hidden" name="activity_id" value="{{ activity.activity_id }}">
+                  <button type="submit" class="btn btn-danger btn-sm">拒绝</button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="empty">没有待审核报名。</div>
+  {% endif %}
+</section>
+
+<section class="section">
+  <div class="section-title"><h2>已通过（{{ approved|length }}）</h2></div>
+  {% if approved %}
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr><th>学生</th><th>学号</th><th>通过时间</th></tr></thead>
+        <tbody>
+          {% for item in approved %}
+            {% set r = item.registration %}
+            <tr>
+              <td class="title-cell">{{ item.student_name }}</td>
+              <td>{{ r.student_id }}</td>
+              <td>{{ r.updated_at|dt }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="empty">还没有已通过报名。</div>
+  {% endif %}
+</section>
+
+<section class="section">
+  <div class="section-title"><h2>历史记录（{{ history|length }}）</h2></div>
+  {% if history %}
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr><th>学生</th><th>学号</th><th>状态</th><th>更新时间</th></tr></thead>
+        <tbody>
+          {% for item in history %}
+            {% set r = item.registration %}
+            <tr>
+              <td>{{ item.student_name }}</td>
+              <td>{{ r.student_id }}</td>
+              <td><span class="badge badge-{{ r.status|status_class }}">{{ r.status|status_label }}</span></td>
+              <td>{{ r.updated_at|dt }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="empty">没有已拒绝或已取消记录。</div>
+  {% endif %}
+</section>
+{% endblock %}
