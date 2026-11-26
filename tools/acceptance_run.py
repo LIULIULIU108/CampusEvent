@@ -25,10 +25,7 @@ from zoneinfo import ZoneInfo
 
 BASE = os.environ.get("CAMPUSEVENT_BASE_URL", "http://127.0.0.1:5000")
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-EVIDENCE = os.environ.get(
-    "CAMPUSEVENT_EVIDENCE_DIR", os.path.join(ROOT, "docs", "evidence")
-)
-EVIDENCE_REL = os.path.relpath(EVIDENCE, ROOT).replace("\\", "/")
+EVIDENCE = os.path.join(ROOT, "docs", "evidence")
 HTML_DIR = os.path.join(EVIDENCE, "html")
 LOG_PATH = os.path.join(EVIDENCE, "acceptance-log.json")
 STATE_PATH = os.path.join(EVIDENCE, "state.json")
@@ -70,7 +67,7 @@ def snapshot(name: str, text: str) -> str:
     path = os.path.join(HTML_DIR, f"{name}.html")
     with open(path, "w", encoding="utf-8") as fh:
         fh.write(text)
-    return f"{EVIDENCE_REL}/html/{name}.html"
+    return f"docs/evidence/html/{name}.html"
 
 
 def record(cid: str, action: str, expected: str, actual: str, passed: bool, evidence: list[str]) -> None:

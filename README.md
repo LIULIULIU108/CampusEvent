@@ -91,8 +91,10 @@
 │  ├─ 09_实验二答辩PPT_v2_24计科2班_刘东梁.pptx
 │  ├─ diagrams/             # V1/V2 类图、时序图、PNG
 │  └─ evidence/             # baseline-v1 与 change-v2 证据
-├─ deploy/                  # 部署脚本（不含密钥）
-├─ tools/                   # 验收、证据、报告生成脚本
+├─ deploy/                  # baseline 部署脚本（未修改）
+├─ deploy_v2/               # change-v2 部署脚本（app_v2）
+├─ tools/                   # baseline 工具（未修改）
+├─ tools_v2/                # change-v2 验收/证据/报告工具
 ├─ run.py / run_v2.py       # baseline / change-v2 启动
 ├─ cli.py / cli_v2.py       # baseline / change-v2 CLI
 ├─ pytest.ini / pytest_v2.ini
@@ -210,9 +212,9 @@ python -m pytest -c pytest_v2.ini
 python cli_v2.py seed-students
 python run_v2.py
 # 另一终端
-python tools/acceptance_run.py
+python tools_v2/acceptance_run_v2.py
 # 停止并重新启动服务后
-python tools/acceptance_run.py --verify
+python tools_v2/acceptance_run_v2.py --verify
 ```
 
 ## 部署
@@ -225,7 +227,7 @@ python tools/acceptance_run.py --verify
 - v1→v2 迁移在应用启动时自动执行；旧演示库升级后运行 `python cli_v2.py set-demo-grades`
 - 邮件记录页：`/admin/notifications`（管理员）
 
-完整步骤、环境变量、备份与故障处理见 [docs/07_部署文档.md](docs/07_部署文档.md)。`deploy/` 下脚本不含密钥；`.thevibehosting.json`、`.thevibehosting_key` 仅保存在本地并已加入 `.gitignore`。
+完整步骤、环境变量、备份与故障处理见 [docs/07_部署文档.md](docs/07_部署文档.md)。change-v2 部署使用 `deploy_v2/deploy_v2.ps1`（原 `deploy/` 保持 baseline 原样）；`.thevibehosting.json`、`.thevibehosting_key` 仅保存在本地并已加入 `.gitignore`。
 
 ## Git 标签与版本
 

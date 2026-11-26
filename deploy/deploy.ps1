@@ -24,7 +24,7 @@ tar -czf $tar `
     --exclude=.pytest-tmp --exclude=.pytest_cache --exclude=.screenshot-profile `
     --exclude=instance --exclude=__pycache__ --exclude=.thevibehosting.json `
     --exclude=.thevibehosting_key --exclude=docs --exclude=tests `
-    app app_v2 run.py run_v2.py cli.py cli_v2.py requirements.txt pytest.ini pytest_v2.ini README.md
+    app run.py cli.py requirements.txt pytest.ini
 if ($LASTEXITCODE -ne 0) { throw "tar failed" }
 
 scp @sshOpts -P $port $tar "root@${hostIp}:/root/deploy.tar.gz"

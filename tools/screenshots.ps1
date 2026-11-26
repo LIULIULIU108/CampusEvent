@@ -1,13 +1,11 @@
 param(
-    [string]$EvidenceDir = "",
     [string]$PublicUrl = ""
 )
 
 $ErrorActionPreference = "Continue"
 $root = Split-Path -Parent $PSScriptRoot
-$evidence = if ($EvidenceDir) { (Resolve-Path -LiteralPath $EvidenceDir).Path } else { Join-Path $root "docs\evidence" }
-$screens = Join-Path $evidence "screens"
-$png = Join-Path $evidence "png"
+$screens = Join-Path $root "docs\evidence\screens"
+$png = Join-Path $root "docs\evidence\png"
 New-Item -ItemType Directory -Force -Path $png | Out-Null
 
 $edgeCandidates = @(
